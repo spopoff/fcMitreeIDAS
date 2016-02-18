@@ -34,13 +34,17 @@
 			<security:jdbc-user-service data-source-ref="dataSource"/>
 		</security:authentication-provider>
 	</security:authentication-manager>
-		
 	<mvc:view-controller path="/login" view-name="login" />
 
 	<security:http disable-url-rewriting="true" use-expressions="true"> 
 		<security:form-login login-page="/login" authentication-failure-url="/login?error=failure" authentication-success-handler-ref="authenticationTimeStamper" />
 		<security:intercept-url pattern="/authorize" access="hasRole('ROLE_USER')" />
-		<security:intercept-url pattern="/**" access="permitAll" />
+                <!-- changement page login acceès tous sinon tout le site authentifié -->
+                <security:intercept-url pattern="/mdeidas" access="permitAll" method="GET" />
+		<security:intercept-url pattern="/login" access="permitAll" />
+                <security:intercept-url pattern="/eidas" access="permitAll" />
+                <security:intercept-url pattern="/runeidas" access="permitAll" />
+		<security:intercept-url pattern="/**" access="isAuthenticated()" />
 		<security:custom-filter ref="authRequestFilter" after="SECURITY_CONTEXT_FILTER" />
 		<security:logout logout-url="/logout" />
 		<security:anonymous />

@@ -2,6 +2,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="o" tagdir="/WEB-INF/tags"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <o:header title="Log In" />
 <script type="text/javascript">
@@ -14,6 +16,10 @@ $(document).ready(function() {
 
 //-->
 </script>
+<style>
+h2 {text-align:center;}
+</style>
+
 <o:topbar />
 <div class="container-fluid main">
 
@@ -40,12 +46,16 @@ $(document).ready(function() {
 					</div>
 				</div>
 				<div>
-					<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+					<!--<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />-->
+                                        <sec:csrfInput />
 					<input type="submit" class="btn" value="Login" name="submit">
 				</div>
 			</form>
 		</div>
 	</div>
+</div>
+<div>
+    <h2><a href="<c:url value="/eidas"/>">lien vers authentification eIDAS</a></h2>
 </div>
 
 <o:footer/>

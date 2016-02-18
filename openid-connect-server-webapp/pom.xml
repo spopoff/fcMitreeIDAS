@@ -89,6 +89,12 @@
 		<dependency>
 			<groupId>org.mitre</groupId>
 			<artifactId>openid-connect-server</artifactId>
+		 <exclusions>
+		  <exclusion>
+		   <groupId>commons-codec</groupId>
+		   <artifactId>commons-codec</artifactId>
+		  </exclusion>
+		 </exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -133,5 +139,41 @@
 			<groupId>com.zaxxer</groupId>
 			<artifactId>HikariCP</artifactId>
 		</dependency>
+	 <dependency>
+	  <groupId>eu.eidas</groupId>
+	  <artifactId>saml-engine</artifactId>
+	  <version>eidas.1.0</version>
+	  <exclusions>
+	   <exclusion>
+	    <groupId>commons-codec</groupId>
+	    <artifactId>commons-codec</artifactId>
+	   </exclusion>
+	  </exclusions>
+	 </dependency>
+	 <dependency>
+	  <groupId>eu.eidas</groupId>
+	  <artifactId>eidas-configmodule</artifactId>
+	  <version>eidas.1.0</version>
+	 </dependency>
+	 <dependency>
+	  <groupId>eu.eidas</groupId>
+	  <artifactId>eidas-commons</artifactId>
+	  <version>eidas.1.0</version>
+	 </dependency>
+	 <dependency>
+	  <groupId>commons-codec</groupId>
+	  <artifactId>commons-codec</artifactId>
+	  <version>1.10</version>
+	 </dependency>
+	 <dependency>
+	  <groupId>org.apache.struts</groupId>
+	  <artifactId>struts2-core</artifactId>
+	  <version>2.3.24.1</version>
+	 </dependency>
+	 <dependency>
+	  <groupId>org.apache.struts.xwork</groupId>
+	  <artifactId>xwork-core</artifactId>
+	  <version>2.3.24.1</version>
+	 </dependency>
 	</dependencies>
 </project>

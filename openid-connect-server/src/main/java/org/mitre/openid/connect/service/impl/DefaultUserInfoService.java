@@ -16,6 +16,8 @@
  *******************************************************************************/
 package org.mitre.openid.connect.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.mitre.oauth2.model.ClientDetailsEntity;
 import org.mitre.oauth2.model.ClientDetailsEntity.SubjectType;
 import org.mitre.oauth2.service.ClientDetailsEntityService;
@@ -23,6 +25,8 @@ import org.mitre.openid.connect.model.UserInfo;
 import org.mitre.openid.connect.repository.UserInfoRepository;
 import org.mitre.openid.connect.service.PairwiseIdentiferService;
 import org.mitre.openid.connect.service.UserInfoService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +38,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class DefaultUserInfoService implements UserInfoService {
+    static final Logger LOGGER = LoggerFactory.getLogger(DefaultUserInfoService.class);
+    private List<UserInfo> userSaml;
 
 	@Autowired
 	private UserInfoRepository userInfoRepository;
@@ -46,7 +52,22 @@ public class DefaultUserInfoService implements UserInfoService {
 
 	@Override
 	public UserInfo getByUsername(String username) {
-		return userInfoRepository.getByUsername(username);
+            UserInfo ret = null;
+            ret = userInfoRepository.getByUsername(username);
+            if(ret==null){
+                //seconde change
+                if(userSaml!=null){
+                    if(!userSaml.isEmpty()){
+                        for(UserInfo un: userSaml){
+                            if(un.getSub().equals(username)){
+                                ret = un;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            return ret;
 	}
 
 	@Override
@@ -71,7 +92,46 @@ public class DefaultUserInfoService implements UserInfoService {
 
 	@Override
 	public UserInfo getByEmailAddress(String email) {
-		return userInfoRepository.getByEmailAddress(email);
+            UserInfo ret = null;
+            ret = userInfoRepository.getByEmailAddress(email);
+            if(ret==null){
+                //seconde change
+                if(userSaml!=null){
+                    if(!userSaml.isEmpty()){
+                        for(UserInfo un: userSaml){
+                            if(un.getEmail().equals(email)){
+                                ret = un;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            return ret;
 	}
-
+        /**
+         * une fonction pour ajouter dynamiquement les utilisateurs provenant des
+         * assertions sans passer par la persistance
+         * @param user
+         * @param clientId 
+         */
+        public void addUserInfo(UserInfo user){
+            if(userSaml==null){
+                userSaml = new ArrayList<>();
+                userSaml.add(user);
+                LOGGER.debug("ajouté premier userSaml pour user="+user.getSub());
+                return;
+            }
+            boolean found = false;
+            for(UserInfo un: userSaml){
+                if(un.getSub().equals(user.getSub())){
+                    found = true;
+                    break;
+                }
+            }
+            if(!found){
+                userSaml.add(user);
+                LOGGER.debug("ajouté nouveau userSaml pour user="+user.getSub());
+            }
+        }
 }

@@ -1,0 +1,37 @@
+
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	<constant name="struts.enable.DynamicMethodInvocation" value="true" />
+        <constant name="struts.action.extension" value=""/>
+        <constant name="struts.action.excludePattern" value="([^\\s]+(\\.(?i)(css|png|gif|svg|js))$)"/>
+	<package name="eu.eidas.sp" extends="struts-default" namespace="/eidas" >
+            <global-exception-mappings>
+                <exception-mapping result="error" exception="java.lang.RuntimeException"/>
+            </global-exception-mappings>
+
+            <action name="*IndexPage" method="{1}" class="eu.eidas.sp.IndexAction" >
+                    <result name="populate">../speidas/selectAttributes.jsp</result>
+                    <result name="success">../speidas/samlRequest.jsp</result>
+                    <result name="error">../speidas/errorPage.jsp</result>
+            </action>
+            <action name="*SamlAction" method="{1}" class="eu.eidas.sp.SamlAction" >
+                <result type="redirect">${actionUrl}</result>
+            </action>
+            <action name="*ReturnPage" method="{1}" class="eu.eidas.sp.ReturnAction">
+                    <result name="populate">../speidas/returnPage.jsp</result>
+                    <result name="success">../speidas/samlResponse.jsp</result>
+                    <result name="error">../speidas/errorPage.jsp</result>
+            </action>
+	</package>
+        <package name="eu.eidas.springsecu" extends="struts-default" namespace="/saml" >
+            <global-exception-mappings>
+                <exception-mapping result="error" exception="java.lang.RuntimeException"/>
+            </global-exception-mappings>
+            <action name="*SamlAction" method="{1}" class="eu.eidas.sp.SamlAction" >
+                <result type="redirect">${actionUrl}</result>
+            </action>
+        </package>
+</struts>

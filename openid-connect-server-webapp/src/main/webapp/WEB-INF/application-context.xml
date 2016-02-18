@@ -71,7 +71,23 @@
 	<!-- Spring Security configuration -->
 
 	<oauth:resource-server id="resourceServerFilter" token-services-ref="defaultOAuth2ProviderTokenService" />
-
+        <!-- filtre saml presque RFC 7522 -->
+        <security:http pattern="/respeidas"
+                auto-config="true"
+                use-expressions="true"
+                authentication-manager-ref="samlAuthenticationManager">
+            <security:intercept-url pattern="/respeidas" access="hasRole('ROLE_USER')" />
+            <security:custom-filter ref="samlFilter" after="FORM_LOGIN_FILTER" />
+            <security:csrf request-matcher-ref="allButRespEidasMatcher"/>
+        </security:http>
+	<security:authentication-manager alias="samlAuthenticationManager">
+                <security:authentication-provider ref="samlAuthProvider" />
+	</security:authentication-manager>
+	<bean id="samlAuthProvider" class="org.mitre.openid.connect.assertion.SAML2AuthenticationProvider" />
+        <bean id="samlFilter" class="org.mitre.openid.connect.assertion.SAML3AssertionTokenEndpointFilter" >
+            <property name="authenticationManager" ref="samlAuthenticationManager" />
+        </bean>
+        <bean id="allButRespEidasMatcher" class="org.mitre.eidas.CsrfSecurityRequestMatcher" />
 	<security:http pattern="/token" 
 		create-session="stateless"
 		authentication-manager-ref="clientAuthenticationManager"

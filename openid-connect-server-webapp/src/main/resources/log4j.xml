@@ -28,13 +28,13 @@
 
 	<!-- Application Loggers -->
 	<logger name="org.mitre.openid">
-		<level value="info" />
+		<level value="debug" />
 	</logger>
 	<logger name="org.mitre.oauth2">
-		<level value="info" />
+		<level value="debug" />
 	</logger>
-	<logger name="org.mitre.discovery">
-		<level value="info" />
+	<logger name="org.mitre.eidas">
+		<level value="debug" />
 	</logger>
 	<logger name="org.mitre.jose">
 		<level value="info" />
@@ -62,13 +62,16 @@
 		<level value="info" />
 	</logger>
 
-	<logger name="org.springframework.web">
-		<level value="info" />
+	<logger name="org.springframework.security.web.FilterChainProx">
+		<level value="debug" />
 	</logger>
 
 	<logger name="org.springframework.security">
-		<level value="warn" />
+		<level value="debug" />
 	</logger>
+	<logger name="org.opensaml">
+            <level value="info" />
+        </logger>
 
 	<!-- Root Logger -->
 	<root>
