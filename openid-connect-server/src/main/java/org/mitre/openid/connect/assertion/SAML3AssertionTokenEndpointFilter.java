@@ -21,6 +21,7 @@ import eu.eidas.auth.commons.IPersonalAttributeList;
 import eu.eidas.auth.commons.PersonalAttribute;
 import eu.eidas.auth.engine.EIDASSAMLEngine;
 import eu.eidas.engine.exceptions.EIDASSAMLEngineException;
+import eu.eidas.sp.ApplicationContextProvider;
 import eu.eidas.sp.Constants;
 import eu.eidas.sp.SPUtil;
 import java.io.IOException;
@@ -38,6 +39,10 @@ import org.mitre.openid.connect.service.UserInfoService;
 import org.mitre.openid.connect.service.impl.DefaultUserInfoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
@@ -55,8 +60,10 @@ public class SAML3AssertionTokenEndpointFilter extends AbstractAuthenticationPro
     private static final GrantedAuthority ROLE_ADMIN = new SimpleGrantedAuthority("ROLE_ADMIN");
     private static final GrantedAuthority ROLE_CLIENT = new SimpleGrantedAuthority("ROLE_CLIENT");
     private static final GrantedAuthority ROLE_USER = new SimpleGrantedAuthority("ROLE_USER");
+    private final String RELAYSTATE = "RelayState";
     @Resource
     UserInfoService userInfServ;
+    RelayStateRepositoryService relayStateRepository;
     
     public SAML3AssertionTokenEndpointFilter(){
         super("/respeidas");
@@ -66,13 +73,22 @@ public class SAML3AssertionTokenEndpointFilter extends AbstractAuthenticationPro
         LOG.debug("Arrive dans attemptAuthentication");
         Authentication ret = null;
         String SAMLResponse = request.getParameter("SAMLResponse");
-        String relayState = request.getParameter("relayState");
+        String relayState = request.getParameter(RELAYSTATE);
         if(relayState==null){
             logger.debug("Pas de relayState null");
         }else if(relayState.isEmpty()){
             logger.debug("Pas de relayState vide");
         }else{
-            logger.debug("relayState="+relayState);
+            if(relayStateRepository==null){
+                relayStateRepository = ApplicationContextProvider.getApplicationContext().getBean(RelayStateRepositoryService.class);            
+            }
+            
+            if(relayStateRepository.existRelayState(relayState)){
+                logger.debug("retour avec relayState="+relayState);
+            }else{
+                logger.error("retour avec mauvais relayState="+relayState);
+                throw new BadCredentialsException("bad csrf relayState");
+            }
         }
         EIDASAuthnResponse authnResponse = null;
         IPersonalAttributeList personalAttributeList = null;
@@ -153,6 +169,14 @@ public class SAML3AssertionTokenEndpointFilter extends AbstractAuthenticationPro
         ret.add("Gender");
         ret.add("DateOfBirth");
         return ret;
+    }
+
+    public RelayStateRepositoryService getRelayStateRepository() {
+        return relayStateRepository;
+    }
+
+    public void setRelayStateRepository(RelayStateRepositoryService relayStateRepository) {
+        this.relayStateRepository = relayStateRepository;
     }
     
 }

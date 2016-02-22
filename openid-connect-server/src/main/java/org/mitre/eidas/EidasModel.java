@@ -29,6 +29,7 @@ import eu.eidas.auth.engine.metadata.MetadataConfigParams;
 import eu.eidas.auth.engine.metadata.MetadataGenerator;
 import eu.eidas.engine.exceptions.EIDASSAMLEngineException;
 import eu.eidas.engine.exceptions.SAMLEngineException;
+import eu.eidas.sp.ApplicationContextProvider;
 import eu.eidas.sp.ApplicationSpecificServiceException;
 import eu.eidas.sp.Constants;
 import eu.eidas.sp.SPUtil;
@@ -37,11 +38,15 @@ import java.util.List;
 import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
+import org.mitre.openid.connect.assertion.RelayStateRepositoryService;
 import org.opensaml.saml2.core.Assertion;
 import org.opensaml.saml2.core.impl.AssertionMarshaller;
 import org.opensaml.xml.io.MarshallingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  *
@@ -83,6 +88,7 @@ public class EidasModel {
     private String SAMLResponse;
     private String samlResponseXML;
     private String samlUnencryptedResponseXML;
+    private String relayState;
 
     public EidasModel(){
         loadGlobalConfig();
@@ -344,5 +350,13 @@ public class EidasModel {
 
     public void setSAMLResponse(String SAMLResponse) {
         this.SAMLResponse = SAMLResponse;
+    }
+
+    public String getRelayState() {
+        return relayState;
+    }
+
+    public void setRelayState(String relayState) {
+        this.relayState = relayState;
     }
 }

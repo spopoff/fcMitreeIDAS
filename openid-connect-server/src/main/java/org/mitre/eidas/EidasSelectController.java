@@ -15,6 +15,8 @@
  */
 package org.mitre.eidas;
 
+import org.mitre.openid.connect.assertion.RelayStateRepositoryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -28,6 +30,9 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @Controller
 public class EidasSelectController {
+
+    @Autowired
+    RelayStateRepositoryService relayStateRepository;
     
     @RequestMapping(value = "/eidas", method = RequestMethod.GET)
     public ModelAndView openForm() {
@@ -37,6 +42,9 @@ public class EidasSelectController {
     @RequestMapping(value = "/runeidas", method = RequestMethod.POST)
     public String requestSaml(@ModelAttribute EidasModel eidasModel, Model model){
         eidasModel.depose();
+        String un = java.util.UUID.randomUUID().toString();
+        relayStateRepository.addRelayState(un);
+        eidasModel.setRelayState(un);
         model.addAttribute("eidasModel", eidasModel);
         return "samlRequest";
     }
