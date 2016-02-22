@@ -86,6 +86,7 @@
 	<bean id="samlAuthProvider" class="org.mitre.openid.connect.assertion.SAML2AuthenticationProvider" />
         <bean id="samlFilter" class="org.mitre.openid.connect.assertion.SAML3AssertionTokenEndpointFilter" >
             <property name="authenticationManager" ref="samlAuthenticationManager" />
+            <property name="relayStateRepository" ref="relayStateRepository" />
         </bean>
         <bean id="allButRespEidasMatcher" class="org.mitre.eidas.CsrfSecurityRequestMatcher" />
 	<security:http pattern="/token" 
@@ -103,8 +104,9 @@
 		<security:custom-filter ref="corsFilter" after="SECURITY_CONTEXT_FILTER" />
 		<security:access-denied-handler ref="oauthAccessDeniedHandler" />
 	</security:http>
+        <bean id="relayStateRepository" class="org.mitre.openid.connect.assertion.RelayStateRepositoryService" />
 
-	<!-- Allow open access to discovery endpoints -->
+        <!-- Allow open access to discovery endpoints -->
 	<security:http pattern="/#{T(org.mitre.openid.connect.web.JWKSetPublishingEndpoint).URL}**" use-expressions="true" entry-point-ref="http403EntryPoint" create-session="stateless">
 		<security:intercept-url pattern="/#{T(org.mitre.openid.connect.web.JWKSetPublishingEndpoint).URL}**" access="permitAll"/>
 		<security:custom-filter ref="corsFilter" after="SECURITY_CONTEXT_FILTER" />

@@ -8,6 +8,6 @@
     <input type="hidden" id="SAMLRequest" name="SAMLRequest" value="${eidasModel.SAMLRequest}"/>
     <input type="hidden" name="country" value="${eidasModel.citizen}"/>
     <input type="hidden" name="sendmethods" value="POST"/>
-    <input type="hidden" name="RelayState" value="${_csrf.token}" />
+    <input type="hidden" name="RelayState" value="${eidasModel.relayState}" />
 </form:form>
 </html>
